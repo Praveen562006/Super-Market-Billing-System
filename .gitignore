@@ -1,5 +1,26 @@
-node_modules
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Environment & local secrets
+.env
+instance/
+flask_session/
+
+# Node (legacy MERN source kept under legacy/)
+node_modules/
+backend/
 backend/test.rest
-backend/node_modules
 billing-system.pdf
-backend/.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

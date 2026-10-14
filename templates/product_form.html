@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit product' if product else 'Add product' }}{% endblock %}
+{% block page_title %}{{ 'Edit product' if product else 'Add product' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Edit product' if product else 'Add product' }}</h1>
+    <p class="subtitle">{{ product.name if product else 'Create a new catalogue item' }}</p>
+  </div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('products.index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<form method="post" class="card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card__body">
+    <div class="form-grid">
+      <div class="field">
+        <label for="sku">SKU / product code *</label>
+        <input type="text" id="sku" name="sku" maxlength="64" required value="{{ product.sku if product else '' }}">
+      </div>
+      <div class="field">
+        <label for="barcode">Barcode</label>
+        <input type="text" id="barcode" name="barcode" maxlength="64" value="{{ product.barcode or '' if product else '' }}">
+      </div>
+      <div class="field full">
+        <label for="name">Product name *</label>
+        <input type="text" id="name" name="name" maxlength="180" required value="{{ product.name if product else '' }}">
+      </div>
+      <div class="field">
+        <label for="category_id">Category</label>
+        <select id="category_id" name="category_id">
+          <option value="">Uncategorised</option>
+          {% for category in categories %}
+          <option value="{{ category.id }}" {{ 'selected' if product and product.category_id == category.id }}>{{ category.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="selling_price">Selling price *</label>
+        <input type="number" step="0.01" min="0" id="selling_price" name="selling_price" required value="{{ product.selling_price if product else '0.00' }}">
+      </div>
+      <div class="field">
+        <label for="cost_price">Cost price</label>
+        <input type="number" step="0.01" min="0" id="cost_price" name="cost_price" value="{{ product.cost_price if product else '0.00' }}">
+      </div>
+      <div class="field">
+        <label for="discount_percent">Discount (%)</label>
+        <input type="number" step="0.01" min="0" max="100" id="discount_percent" name="discount_percent" value="{{ product.discount_percent if product else '0' }}">
+      </div>
+      <div class="field">
+        <label for="tax_rate">Tax rate (%)</label>
+        <input type="number" step="0.01" min="0" max="100" id="tax_rate" name="tax_rate" value="{{ product.tax_rate if product and product.tax_rate is not none else '' }}" placeholder="Use store default">
+        <span class="hint">Leave blank to use the store default tax rate.</span>
+      </div>
+      <div class="field">
+        <label for="low_stock_threshold">Low-stock threshold</label>
+        <input type="number" min="0" id="low_stock_threshold" name="low_stock_threshold" value="{{ product.low_stock_threshold if product else '' }}" placeholder="Store default">
+      </div>
+      {% if not product %}
+      <div class="field">
+        <label for="stock_quantity">Opening stock</label>
+        <input type="number" min="0" id="stock_quantity" name="stock_quantity" value="0">
+        <span class="hint">Logged as opening stock. Later changes are made via Inventory.</span>
+      </div>
+      {% else %}
+      <div class="field">
+        <label>Current stock</label>
+        <input type="text" value="{{ product.stock_quantity }}" disabled>
+        <span class="hint">Use <a href="{{ url_for('inventory.index') }}">Inventory</a> to adjust stock so movements are recorded.</span>
+      </div>
+      {% endif %}
+      <div class="field full">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" maxlength="2000">{{ product.description or '' if product else '' }}</textarea>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <div class="checkbox-row">
+          <input type="checkbox" id="is_active" name="is_active" {{ 'checked' if (product.is_active if product else True) }}>
+          <label for="is_active" style="font-weight:500">Active and available for sale</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card__footer">
+    <div class="btn-group">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> {{ 'Save changes' if product else 'Create product' }}</button>
+      <a class="btn btn-outline" href="{{ url_for('products.index') }}">Cancel</a>
+    </div>
+  </div>
+</form>
+{% endblock %}

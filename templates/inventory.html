@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager_links, stock_badge %}
+{% block title %}Inventory{% endblock %}
+{% block page_title %}Inventory{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Inventory</h1><p class="subtitle">Current stock levels and adjustments.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('inventory.movements') }}"><i class="bi bi-arrow-left-right"></i> Movement history</a>
+</div>
+
+<div class="stat-grid mb-3">
+  <div class="stat"><div class="stat__icon bg-brand-soft"><i class="bi bi-boxes"></i></div><div><div class="stat__label">Active products</div><div class="stat__value">{{ summary.total }}</div></div></div>
+  <div class="stat"><div class="stat__icon bg-warn-soft"><i class="bi bi-exclamation-triangle"></i></div><div><div class="stat__label">Low stock</div><div class="stat__value">{{ summary.low }}</div></div></div>
+  <div class="stat"><div class="stat__icon bg-danger-soft"><i class="bi bi-x-octagon"></i></div><div><div class="stat__label">Out of stock</div><div class="stat__value">{{ summary.out }}</div></div></div>
+  <div class="stat"><div class="stat__icon bg-ok-soft"><i class="bi bi-cash-stack"></i></div><div><div class="stat__label">Stock value (retail)</div><div class="stat__value">{{ stock_value.retail|money }}</div><div class="stat__meta">Cost {{ stock_value.cost|money }}</div></div></div>
+</div>
+
+<form class="filters" method="get">
+  <div class="field flex-1">
+    <label>Search</label>
+    <input type="text" name="q" value="{{ q }}" placeholder="Name or SKU">
+  </div>
+  <div class="field">
+    <label>Stock filter</label>
+    <select name="stock">
+      <option value="all" {{ 'selected' if stock == 'all' }}>All</option>
+      <option value="low" {{ 'selected' if stock == 'low' }}>Low stock</option>
+      <option value="out" {{ 'selected' if stock == 'out' }}>Out of stock</option>
+    </select>
+  </div>
+  <button class="btn btn-dark" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+  <a class="btn btn-outline" href="{{ url_for('inventory.index') }}">Reset</a>
+</form>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr><th>SKU</th><th>Product</th><th>Stock</th><th class="num">Threshold</th><th class="num">Selling</th><th style="width:340px">Adjust stock</th></tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td><code>{{ product.sku }}</code></td>
+          <td>{{ product.name }}</td>
+          <td>{{ stock_badge(product) }}</td>
+          <td class="num">{{ product.low_stock_threshold }}</td>
+          <td class="num">{{ product.selling_price|money }}</td>
+          <td>
+            <form method="post" action="{{ url_for('inventory.adjust', product_id=product.id) }}" class="d-flex gap-1">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="number" name="quantity_change" placeholder="+/- qty" required style="max-width:110px">
+              <input type="text" name="reason" placeholder="Reason" required style="min-width:120px">
+              <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-check2"></i></button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="table-empty">No products found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ pager_links(pagination, 'inventory.index') }}
+{% endblock %}

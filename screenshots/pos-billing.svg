@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1424"/>
+      <stop offset="100%" stop-color="#1a2332"/>
+    </linearGradient>
+    <linearGradient id="card2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8f9fc"/>
+    </linearGradient>
+    <linearGradient id="accent2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff7e5f"/>
+      <stop offset="100%" stop-color="#ff5c7a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="450" fill="url(#bg2)"/>
+
+  <!-- Sidebar -->
+  <rect width="200" height="450" fill="#0d1424"/>
+  <rect x="20" y="25" width="40" height="40" rx="10" fill="url(#accent2)"/>
+  <text x="70" y="50" font-family="Arial" font-size="14" font-weight="bold" fill="#ffffff">SuperMarket</text>
+  <text x="70" y="66" font-family="Arial" font-size="10" fill="#8b97ad">Billing System</text>
+
+  <circle cx="30" cy="113" r="6" fill="#8b97ad"/>
+  <text x="46" y="118" font-family="Arial" font-size="12" fill="#8b97ad">Dashboard</text>
+
+  <rect x="10" y="133" width="180" height="36" rx="8" fill="#ff6b4a" opacity="0.15"/>
+  <circle cx="30" cy="151" r="6" fill="#ff6b4a"/>
+  <text x="46" y="156" font-family="Arial" font-size="12" fill="#ff6b4a" font-weight="600">Billing / POS</text>
+
+  <circle cx="30" cy="188" r="6" fill="#8b97ad"/>
+  <text x="46" y="193" font-family="Arial" font-size="12" fill="#8b97ad">Products</text>
+
+  <circle cx="30" cy="223" r="6" fill="#8b97ad"/>
+  <text x="46" y="228" font-family="Arial" font-size="12" fill="#8b97ad">Inventory</text>
+
+  <circle cx="30" cy="258" r="6" fill="#8b97ad"/>
+  <text x="46" y="263" font-family="Arial" font-size="12" fill="#8b97ad">Reports</text>
+
+  <!-- Top bar -->
+  <rect x="220" y="15" width="560" height="35" rx="8" fill="#ffffff" opacity="0.05"/>
+  <text x="240" y="37" font-family="Arial" font-size="12" fill="#8b97ad">New Sale</text>
+  <rect x="680" y="18" width="90" height="28" rx="6" fill="#1e2a3a"/>
+  <text x="695" y="36" font-family="Arial" font-size="10" fill="#8b97ad">Invoices &rarr;</text>
+
+  <!-- Product search -->
+  <rect x="220" y="65" width="370" height="50" rx="10" fill="url(#card2)"/>
+  <text x="240" y="85" font-family="Arial" font-size="10" fill="#6b7280">Search products</text>
+  <rect x="235" y="90" width="340" height="20" rx="4" fill="#f1f3f9"/>
+  <text x="245" y="104" font-family="Arial" font-size="10" fill="#9ca3af">Search by name, SKU or barcode...</text>
+
+  <!-- Product grid -->
+  <rect x="220" y="130" width="370" height="300" rx="12" fill="url(#card2)"/>
+  <text x="240" y="155" font-family="Arial" font-size="12" font-weight="bold" fill="#172033">Products</text>
+
+  <!-- Product cards -->
+  <rect x="235" y="170" width="80" height="80" rx="8" fill="#fff1ec"/>
+  <text x="255" y="200" font-family="Arial" font-size="20" fill="#ff6b4a">&#127813;</text>
+  <text x="245" y="225" font-family="Arial" font-size="8" fill="#6b7280">Tomato</text>
+  <text x="245" y="240" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;40</text>
+
+  <rect x="325" y="170" width="80" height="80" rx="8" fill="#ecfdf3"/>
+  <text x="345" y="200" font-family="Arial" font-size="20" fill="#12b76a">&#129385;</text>
+  <text x="335" y="225" font-family="Arial" font-size="8" fill="#6b7280">Milk</text>
+  <text x="335" y="240" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;56</text>
+
+  <rect x="415" y="170" width="80" height="80" rx="8" fill="#eff8ff"/>
+  <text x="435" y="200" font-family="Arial" font-size="20" fill="#2e90fa">&#127838;</text>
+  <text x="425" y="225" font-family="Arial" font-size="8" fill="#6b7280">Bread</text>
+  <text x="425" y="240" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;35</text>
+
+  <rect x="505" y="170" width="80" height="80" rx="8" fill="#fffaeb"/>
+  <text x="525" y="200" font-family="Arial" font-size="20" fill="#f79009">&#128095;</text>
+  <text x="515" y="225" font-family="Arial" font-size="8" fill="#6b7280">Eggs</text>
+  <text x="515" y="240" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;72</text>
+
+  <rect x="235" y="260" width="80" height="80" rx="8" fill="#f4f3ff"/>
+  <text x="255" y="290" font-family="Arial" font-size="20" fill="#7a5af8">&#127863;</text>
+  <text x="245" y="315" font-family="Arial" font-size="8" fill="#6b7280">Juice</text>
+  <text x="245" y="330" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;120</text>
+
+  <rect x="325" y="260" width="80" height="80" rx="8" fill="#fef3f2"/>
+  <text x="345" y="290" font-family="Arial" font-size="20" fill="#f04438">&#129379;</text>
+  <text x="335" y="315" font-family="Arial" font-size="8" fill="#6b7280">Cheese</text>
+  <text x="335" y="330" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;250</text>
+
+  <!-- Cart -->
+  <rect x="610" y="65" width="170" height="365" rx="12" fill="url(#card2)"/>
+  <text x="630" y="90" font-family="Arial" font-size="12" font-weight="bold" fill="#172033">Cart</text>
+  <rect x="740" y="75" width="30" height="20" rx="4" fill="#f1f3f9"/>
+  <text x="748" y="89" font-family="Arial" font-size="9" fill="#6b7280">Clear</text>
+
+  <!-- Cart items -->
+  <line x1="625" y1="100" x2="765" y2="100" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="625" y="120" font-family="Arial" font-size="9" fill="#172033">Tomato x2</text>
+  <text x="745" y="120" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;80</text>
+  <text x="625" y="145" font-family="Arial" font-size="9" fill="#172033">Milk x1</text>
+  <text x="745" y="145" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;56</text>
+  <text x="625" y="170" font-family="Arial" font-size="9" fill="#172033">Bread x3</text>
+  <text x="745" y="170" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">&#8377;105</text>
+
+  <line x1="625" y1="185" x2="765" y2="185" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="625" y="205" font-family="Arial" font-size="9" fill="#6b7280">Subtotal</text>
+  <text x="740" y="205" font-family="Arial" font-size="9" fill="#172033">&#8377;241</text>
+  <text x="625" y="222" font-family="Arial" font-size="9" fill="#6b7280">Discount</text>
+  <text x="740" y="222" font-family="Arial" font-size="9" fill="#172033">-&#8377;0</text>
+  <text x="625" y="239" font-family="Arial" font-size="9" fill="#6b7280">Tax</text>
+  <text x="740" y="239" font-family="Arial" font-size="9" fill="#172033">&#8377;0</text>
+  <line x1="625" y1="250" x2="765" y2="250" stroke="#d5dae5" stroke-width="1"/>
+  <text x="625" y="270" font-family="Arial" font-size="11" font-weight="bold" fill="#172033">Total</text>
+  <text x="730" y="270" font-family="Arial" font-size="11" font-weight="bold" fill="#ff6b4a">&#8377;241</text>
+
+  <!-- Payment -->
+  <rect x="625" y="290" width="60" height="24" rx="4" fill="#fff1ec"/>
+  <text x="635" y="306" font-family="Arial" font-size="8" fill="#ff6b4a">Cash</text>
+  <rect x="690" y="290" width="60" height="24" rx="4" fill="#f1f3f9"/>
+  <text x="700" y="306" font-family="Arial" font-size="8" fill="#6b7280">Card</text>
+
+  <rect x="625" y="325" width="140" height="30" rx="6" fill="#f1f3f9"/>
+  <text x="635" y="344" font-family="Arial" font-size="9" fill="#9ca3af">Amount received</text>
+
+  <!-- Complete sale button -->
+  <rect x="625" y="370" width="140" height="35" rx="8" fill="#12b76a"/>
+  <text x="655" y="392" font-family="Arial" font-size="11" font-weight="bold" fill="#ffffff">Complete Sale</text>
+</svg>

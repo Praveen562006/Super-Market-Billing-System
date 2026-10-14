@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Report {{ report.start_date }} - {{ report.end_date }}</title>
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+  <style>body{background:#fff;padding:24px}</style>
+</head>
+<body onload="window.print()">
+  <h1>{{ store.name }}</h1>
+  <p>Sales report &mdash; {{ report.start_date }} to {{ report.end_date }}</p>
+  <table class="data" style="margin-bottom:20px">
+    <tbody>
+      <tr><th>Net revenue</th><td>{{ report.summary.revenue|money }}</td><th>Bills</th><td>{{ report.summary.bills }}</td></tr>
+      <tr><th>Gross sales</th><td>{{ report.summary.subtotal|money }}</td><th>Discounts</th><td>{{ report.summary.discount_total|money }}</td></tr>
+      <tr><th>Tax</th><td>{{ report.summary.tax_total|money }}</td><th>Average sale</th><td>{{ report.summary.average_sale|money }}</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Product-wise sales</h3>
+  <table class="data" style="margin-bottom:20px">
+    <thead><tr><th>Product</th><th>SKU</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead>
+    <tbody>
+      {% for row in report.products %}
+      <tr><td>{{ row.product_name }}</td><td>{{ row.sku }}</td><td class="num">{{ row.quantity }}</td><td class="num">{{ row.revenue|money }}</td></tr>
+      {% else %}<tr><td colspan="4">No data.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+
+  <h3>Transactions</h3>
+  <table class="data">
+    <thead><tr><th>Invoice</th><th>Date</th><th>Payment</th><th class="num">Total</th></tr></thead>
+    <tbody>
+      {% for sale in report.sales %}
+      <tr><td>{{ sale.invoice_number }}</td><td>{{ sale.created_at|datetime }}</td><td>{{ sale.payment_method }}</td><td class="num">{{ sale.grand_total|money }}</td></tr>
+      {% else %}<tr><td colspan="4">No data.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

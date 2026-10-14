@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1424"/>
+      <stop offset="100%" stop-color="#1a2332"/>
+    </linearGradient>
+    <linearGradient id="card3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f8f9fc"/>
+    </linearGradient>
+    <linearGradient id="accent3" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff7e5f"/>
+      <stop offset="100%" stop-color="#ff5c7a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="450" fill="url(#bg3)"/>
+
+  <!-- Sidebar -->
+  <rect width="200" height="450" fill="#0d1424"/>
+  <rect x="20" y="25" width="40" height="40" rx="10" fill="url(#accent3)"/>
+  <text x="70" y="50" font-family="Arial" font-size="14" font-weight="bold" fill="#ffffff">SuperMarket</text>
+  <text x="70" y="66" font-family="Arial" font-size="10" fill="#8b97ad">Billing System</text>
+
+  <circle cx="30" cy="113" r="6" fill="#8b97ad"/>
+  <text x="46" y="118" font-family="Arial" font-size="12" fill="#8b97ad">Dashboard</text>
+
+  <circle cx="30" cy="150" r="6" fill="#8b97ad"/>
+  <text x="46" y="155" font-family="Arial" font-size="12" fill="#8b97ad">Billing / POS</text>
+
+  <circle cx="30" cy="185" r="6" fill="#8b97ad"/>
+  <text x="46" y="190" font-family="Arial" font-size="12" fill="#8b97ad">Products</text>
+
+  <rect x="10" y="205" width="180" height="36" rx="8" fill="#ff6b4a" opacity="0.15"/>
+  <circle cx="30" cy="223" r="6" fill="#ff6b4a"/>
+  <text x="46" y="228" font-family="Arial" font-size="12" fill="#ff6b4a" font-weight="600">Inventory</text>
+
+  <circle cx="30" cy="258" r="6" fill="#8b97ad"/>
+  <text x="46" y="263" font-family="Arial" font-size="12" fill="#8b97ad">Reports</text>
+
+  <!-- Top bar -->
+  <rect x="220" y="15" width="560" height="35" rx="8" fill="#ffffff" opacity="0.05"/>
+  <text x="240" y="37" font-family="Arial" font-size="12" fill="#8b97ad">Inventory Management</text>
+  <rect x="700" y="18" width="75" height="28" rx="6" fill="#ff6b4a"/>
+  <text x="715" y="36" font-family="Arial" font-size="10" fill="#ffffff">+ Add Stock</text>
+
+  <!-- Stats -->
+  <rect x="220" y="65" width="130" height="65" rx="10" fill="url(#card3)"/>
+  <text x="240" y="88" font-family="Arial" font-size="9" fill="#6b7280">Total Products</text>
+  <text x="240" y="112" font-family="Arial" font-size="18" font-weight="bold" fill="#172033">142</text>
+
+  <rect x="360" y="65" width="130" height="65" rx="10" fill="url(#card3)"/>
+  <text x="380" y="88" font-family="Arial" font-size="9" fill="#6b7280">Low Stock</text>
+  <text x="380" y="112" font-family="Arial" font-size="18" font-weight="bold" fill="#f79009">8</text>
+
+  <rect x="500" y="65" width="130" height="65" rx="10" fill="url(#card3)"/>
+  <text x="520" y="88" font-family="Arial" font-size="9" fill="#6b7280">Out of Stock</text>
+  <text x="520" y="112" font-family="Arial" font-size="18" font-weight="bold" fill="#f04438">3</text>
+
+  <rect x="640" y="65" width="130" height="65" rx="10" fill="url(#card3)"/>
+  <text x="660" y="88" font-family="Arial" font-size="9" fill="#6b7280">Stock Value</text>
+  <text x="660" y="112" font-family="Arial" font-size="18" font-weight="bold" fill="#12b76a">&#8377;45.2K</text>
+
+  <!-- Inventory table -->
+  <rect x="220" y="145" width="550" height="285" rx="12" fill="url(#card3)"/>
+  <text x="240" y="170" font-family="Arial" font-size="12" font-weight="bold" fill="#172033">Stock Levels</text>
+
+  <!-- Table header -->
+  <rect x="235" y="185" width="520" height="28" rx="4" fill="#f8f9fc"/>
+  <text x="250" y="203" font-family="Arial" font-size="9" fill="#6b7280">Product</text>
+  <text x="420" y="203" font-family="Arial" font-size="9" fill="#6b7280">SKU</text>
+  <text x="530" y="203" font-family="Arial" font-size="9" fill="#6b7280">Stock</text>
+  <text x="620" y="203" font-family="Arial" font-size="9" fill="#6b7280">Status</text>
+  <text x="700" y="203" font-family="Arial" font-size="9" fill="#6b7280">Action</text>
+
+  <!-- Table rows -->
+  <line x1="235" y1="213" x2="755" y2="213" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="250" y="235" font-family="Arial" font-size="9" fill="#172033">Tomato</text>
+  <text x="420" y="235" font-family="Arial" font-size="9" fill="#6b7280">VEG-001</text>
+  <text x="530" y="235" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">150</text>
+  <rect x="615" y="224" width="45" height="16" rx="4" fill="#ecfdf3"/>
+  <text x="622" y="236" font-family="Arial" font-size="8" fill="#12b76a">In Stock</text>
+  <rect x="690" y="224" width="55" height="16" rx="4" fill="#fff1ec"/>
+  <text x="698" y="236" font-family="Arial" font-size="8" fill="#ff6b4a">Adjust</text>
+
+  <line x1="235" y1="248" x2="755" y2="248" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="250" y="270" font-family="Arial" font-size="9" fill="#172033">Milk</text>
+  <text x="420" y="270" font-family="Arial" font-size="9" fill="#6b7280">DRY-002</text>
+  <text x="530" y="270" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">8</text>
+  <rect x="615" y="259" width="50" height="16" rx="4" fill="#fffaeb"/>
+  <text x="620" y="271" font-family="Arial" font-size="8" fill="#f79009">Low Stock</text>
+  <rect x="690" y="259" width="55" height="16" rx="4" fill="#fff1ec"/>
+  <text x="698" y="271" font-family="Arial" font-size="8" fill="#ff6b4a">Adjust</text>
+
+  <line x1="235" y1="283" x2="755" y2="283" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="250" y="305" font-family="Arial" font-size="9" fill="#172033">Bread</text>
+  <text x="420" y="305" font-family="Arial" font-size="9" fill="#6b7280">BRD-003</text>
+  <text x="530" y="305" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">0</text>
+  <rect x="615" y="294" width="55" height="16" rx="4" fill="#fef3f2"/>
+  <text x="620" y="306" font-family="Arial" font-size="8" fill="#f04438">Out of Stock</text>
+  <rect x="690" y="294" width="55" height="16" rx="4" fill="#fff1ec"/>
+  <text x="698" y="306" font-family="Arial" font-size="8" fill="#ff6b4a">Adjust</text>
+
+  <line x1="235" y1="318" x2="755" y2="318" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="250" y="340" font-family="Arial" font-size="9" fill="#172033">Eggs</text>
+  <text x="420" y="340" font-family="Arial" font-size="9" fill="#6b7280">EGG-004</text>
+  <text x="530" y="340" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">45</text>
+  <rect x="615" y="329" width="45" height="16" rx="4" fill="#ecfdf3"/>
+  <text x="622" y="341" font-family="Arial" font-size="8" fill="#12b76a">In Stock</text>
+  <rect x="690" y="329" width="55" height="16" rx="4" fill="#fff1ec"/>
+  <text x="698" y="341" font-family="Arial" font-size="8" fill="#ff6b4a">Adjust</text>
+
+  <line x1="235" y1="353" x2="755" y2="353" stroke="#e6e9f0" stroke-width="1"/>
+  <text x="250" y="375" font-family="Arial" font-size="9" fill="#172033">Cheese</text>
+  <text x="420" y="375" font-family="Arial" font-size="9" fill="#6b7280">CHS-005</text>
+  <text x="530" y="375" font-family="Arial" font-size="9" font-weight="bold" fill="#172033">5</text>
+  <rect x="615" y="364" width="50" height="16" rx="4" fill="#fffaeb"/>
+  <text x="620" y="376" font-family="Arial" font-size="8" fill="#f79009">Low Stock</text>
+  <rect x="690" y="364" width="55" height="16" rx="4" fill="#fff1ec"/>
+  <text x="698" y="376" font-family="Arial" font-size="8" fill="#ff6b4a">Adjust</text>
+
+  <!-- Pagination -->
+  <text x="250" y="410" font-family="Arial" font-size="9" fill="#6b7280">Showing 1-5 of 142</text>
+  <rect x="680" y="398" width="24" height="18" rx="4" fill="#ff6b4a"/>
+  <text x="690" y="410" font-family="Arial" font-size="9" fill="#ffffff">1</text>
+  <rect x="708" y="398" width="24" height="18" rx="4" fill="#f1f3f9"/>
+  <text x="718" y="410" font-family="Arial" font-size="9" fill="#6b7280">2</text>
+  <rect x="736" y="398" width="24" height="18" rx="4" fill="#f1f3f9"/>
+  <text x="746" y="410" font-family="Arial" font-size="9" fill="#6b7280">&rarr;</text>
+</svg>

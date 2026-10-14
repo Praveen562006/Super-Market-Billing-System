@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}New sale{% endblock %}
+{% block page_title %}Point of sale{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>New sale</h1><p class="subtitle">Search products, build the cart and complete the sale.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('billing.sales') }}"><i class="bi bi-receipt"></i> Invoices</a>
+</div>
+
+<div class="pos">
+  <div class="card">
+    <div class="card__header">
+      <h3><i class="bi bi-search me-2"></i>Products</h3>
+    </div>
+    <div class="card__body">
+      <div class="filters mb-0">
+        <div class="field flex-1">
+          <label>Search by name, SKU or barcode</label>
+          <input type="search" id="posSearch" placeholder="Start typing..." autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="posCategory">
+            <option value="">All</option>
+            {% for category in categories %}<option value="{{ category.id }}">{{ category.name }}</option>{% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card__header">
+      <h3><i class="bi bi-cart3 me-2"></i>Cart</h3>
+      <div class="spacer flex-1"></div>
+      <button class="btn btn-sm btn-outline" type="button" id="clearCart"><i class="bi bi-x-circle"></i> Clear</button>
+    </div>
+    <div class="card__body">
+      <div class="cart-scroll" id="cartBody"></div>
+
+      <div class="mt-2">
+        <div class="cart-summary"><span>Subtotal</span><span id="sumSubtotal">0.00</span></div>
+        <div class="cart-summary"><span>Discount</span><span id="sumDiscount">0.00</span></div>
+        <div class="cart-summary"><span>Tax</span><span id="sumTax">0.00</span></div>
+        <div class="cart-summary total"><span>Total</span><span id="sumTotal">0.00</span></div>
+      </div>
+
+      <hr>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr">
+        <div class="field">
+          <label for="paymentMethod">Payment method</label>
+          <select id="paymentMethod">
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+            <option value="online">Online payment</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="billDiscount">Bill discount (%)</label>
+          <input type="number" min="0" max="100" step="0.01" id="billDiscount" value="0">
+        </div>
+        <div class="field" id="changeRow">
+          <label for="amountReceived">Amount received</label>
+          <input type="number" min="0" step="0.01" id="amountReceived" placeholder="0.00">
+        </div>
+        <div class="field" id="changeDue">
+          <label>Change due</label>
+          <input type="text" id="sumChange" value="0.00" disabled>
+        </div>
+        <div class="field">
+          <label for="customerMobile">Customer mobile</label>
+          <input type="tel" id="customerMobile" maxlength="20" placeholder="Optional">
+        </div>
+        <div class="field">
+          <label for="customerName">Customer name</label>
+          <input type="text" id="customerName" maxlength="120" placeholder="Optional">
+        </div>
+      </div>
+
+      <button class="btn btn-success btn-block mt-3" type="button" id="payBtn" disabled>
+        <i class="bi bi-check2-circle"></i> Complete sale
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.POS_CONFIG = {
+    currency: "{{ store.currency }}",
+    searchUrl: "{{ url_for('billing.search_products') }}",
+    checkoutUrl: "{{ url_for('billing.checkout') }}"
+  };
+</script>
+<script src="{{ url_for('static', filename='js/billing.js') }}"></script>
+{% endblock %}

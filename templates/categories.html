@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Categories{% endblock %}
+{% block page_title %}Categories{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Categories</h1><p class="subtitle">Group products for easier filtering.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('products.index') }}"><i class="bi bi-arrow-left"></i> Products</a>
+</div>
+
+<div class="d-flex gap-2 flex-wrap">
+  <div class="card flex-1" style="min-width:320px">
+    <div class="card__header"><h3>All categories</h3></div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Name</th><th>Description</th><th class="num">Products</th></tr></thead>
+        <tbody>
+          {% for category in categories %}
+          <tr>
+            <td>{{ category.name }}</td>
+            <td>{{ category.description or '-' }}</td>
+            <td class="num">{{ category.products.count() }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="table-empty">No categories yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="min-width:300px;max-width:380px">
+    <div class="card__header"><h3>Add a category</h3></div>
+    <div class="card__body">
+      <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="field mb-2">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" maxlength="120" required>
+        </div>
+        <div class="field mb-3">
+          <label for="description">Description</label>
+          <input type="text" id="description" name="description" maxlength="255">
+        </div>
+        <button class="btn btn-primary btn-block" type="submit"><i class="bi bi-plus-lg"></i> Add category</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

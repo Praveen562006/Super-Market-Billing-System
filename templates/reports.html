@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Sales reports</h1><p class="subtitle">{{ report.start_date }} &rarr; {{ report.end_date }}</p></div>
+  <div class="spacer"></div>
+  <div class="btn-group">
+    <a class="btn btn-outline" href="{{ url_for('reports.print_report', period=report.period, start=report.start_date, end=report.end_date) }}" target="_blank"><i class="bi bi-printer"></i> Print</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.export_csv', kind='sales', period=report.period, start=report.start_date, end=report.end_date) }}"><i class="bi bi-filetype-csv"></i> Sales CSV</a>
+    <a class="btn btn-outline" href="{{ url_for('reports.export_csv', kind='products', period=report.period, start=report.start_date, end=report.end_date) }}"><i class="bi bi-filetype-csv"></i> Products CSV</a>
+  </div>
+</div>
+
+<form class="filters" method="get">
+  <div class="field">
+    <label>Period</label>
+    <select name="period">
+      {% for value, label in [('today','Today'),('week','This week'),('month','This month'),('year','This year'),('custom','Custom range')] %}
+      <option value="{{ value }}" {{ 'selected' if report.period == value }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field"><label>Start date</label><input type="date" name="start" value="{{ report.start_date }}"></div>
+  <div class="field"><label>End date</label><input type="date" name="end" value="{{ report.end_date }}"></div>
+  <button class="btn btn-dark" type="submit"><i class="bi bi-funnel"></i> Apply</button>
+</form>
+
+<div class="stat-grid mb-3">
+  <div class="stat"><div class="stat__icon bg-ok-soft"><i class="bi bi-cash-coin"></i></div><div><div class="stat__label">Net revenue</div><div class="stat__value">{{ report.summary.revenue|money }}</div><div class="stat__meta">Avg {{ report.summary.average_sale|money }}</div></div></div>
+  <div class="stat"><div class="stat__icon bg-info-soft"><i class="bi bi-receipt"></i></div><div><div class="stat__label">Bills</div><div class="stat__value">{{ report.summary.bills }}</div></div></div>
+  <div class="stat"><div class="stat__icon bg-brand-soft"><i class="bi bi-cart"></i></div><div><div class="stat__label">Gross sales</div><div class="stat__value">{{ report.summary.subtotal|money }}</div></div></div>
+  <div class="stat"><div class="stat__icon bg-warn-soft"><i class="bi bi-percent"></i></div><div><div class="stat__label">Discounts</div><div class="stat__value">{{ report.summary.discount_total|money }}</div><div class="stat__meta">Tax {{ report.summary.tax_total|money }}</div></div></div>
+</div>
+
+<div class="d-flex gap-2 flex-wrap mb-3">
+  <div class="card flex-1" style="min-width:320px">
+    <div class="card__header"><h3>Product-wise sales</h3></div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Product</th><th>SKU</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead>
+        <tbody>
+          {% for row in report.products %}
+          <tr><td>{{ row.product_name }}</td><td>{{ row.sku }}</td><td class="num">{{ row.quantity }}</td><td class="num">{{ row.revenue|money }}</td></tr>
+          {% else %}
+          <tr><td colspan="4" class="table-empty">No product sales in this period.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="min-width:280px;max-width:360px">
+    <div class="card__header"><h3>Payments</h3></div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Method</th><th class="num">Bills</th><th class="num">Amount</th></tr></thead>
+        <tbody>
+          {% for row in report.payments %}
+          <tr><td>{{ row.payment_method|capitalize }}</td><td class="num">{{ row.bills }}</td><td class="num">{{ row.amount|money }}</td></tr>
+          {% else %}
+          <tr><td colspan="3" class="table-empty">No payments.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card__header"><h3>Transaction details</h3></div>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Invoice</th><th>Date</th><th>Cashier</th><th>Payment</th><th class="num">Subtotal</th><th class="num">Discount</th><th class="num">Tax</th><th class="num">Total</th></tr></thead>
+      <tbody>
+        {% for sale in report.sales %}
+        <tr>
+          <td><a href="{{ url_for('billing.invoice', sale_id=sale.id) }}">{{ sale.invoice_number }}</a></td>
+          <td>{{ sale.created_at|datetime }}</td>
+          <td>{{ sale.cashier.display_name() if sale.cashier else '-' }}</td>
+          <td>{{ sale.payment_method }}</td>
+          <td class="num">{{ sale.subtotal|money }}</td>
+          <td class="num">{{ (sale.item_discount + sale.bill_discount)|money }}</td>
+          <td class="num">{{ sale.tax_total|money }}</td>
+          <td class="num">{{ sale.grand_total|money }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="table-empty">No transactions in this period.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

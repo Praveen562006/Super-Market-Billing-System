@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="hero mb-3">
+  <div class="hero__content">
+    <div class="hero__eyebrow">Point of sale &amp; inventory</div>
+    <h1>Welcome back, {{ current_user.display_name() }}</h1>
+    <p>{{ stats.today_sales.bills }} bill(s) generated today worth {{ stats.today_sales.revenue|money }}. Keep the shelves stocked and the queue moving.</p>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="{{ url_for('billing.index') }}"><i class="bi bi-cart-plus"></i> New sale</a>
+      {% if current_user.is_admin %}
+      <a class="btn btn-outline" href="{{ url_for('products.create') }}"><i class="bi bi-plus-lg"></i> Add product</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero__art"><i class="bi bi-basket3"></i></div>
+</div>
+
+<div class="stat-grid mb-3">
+  <div class="stat">
+    <div class="stat__icon bg-ok-soft"><i class="bi bi-cash-coin"></i></div>
+    <div>
+      <div class="stat__label">Today's revenue</div>
+      <div class="stat__value">{{ stats.today_sales.revenue|money }}</div>
+      <div class="stat__meta">Avg {{ stats.today_sales.average_sale|money }} / bill</div>
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat__icon bg-info-soft"><i class="bi bi-receipt"></i></div>
+    <div>
+      <div class="stat__label">Today's bills</div>
+      <div class="stat__value">{{ stats.today_sales.bills }}</div>
+      <div class="stat__meta">Tax {{ stats.today_sales.tax_total|money }}</div>
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat__icon bg-brand-soft"><i class="bi bi-box-seam"></i></div>
+    <div>
+      <div class="stat__label">Active products</div>
+      <div class="stat__value">{{ stats.active_products }}</div>
+      <div class="stat__meta">In the catalogue</div>
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat__icon bg-warn-soft"><i class="bi bi-exclamation-triangle"></i></div>
+    <div>
+      <div class="stat__label">Low stock</div>
+      <div class="stat__value">{{ stats.low_stock }}</div>
+      <div class="stat__meta">{{ stats.out_of_stock }} out of stock</div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card__header">
+    <h3><i class="bi bi-graph-up me-2"></i>Sales overview</h3>
+    <div class="spacer flex-1"></div>
+    <div class="btn-group" role="group">
+      <button class="btn btn-sm btn-outline" data-range="daily">14 days</button>
+      <button class="btn btn-sm btn-outline" data-range="weekly">8 weeks</button>
+      <button class="btn btn-sm btn-outline" data-range="monthly">6 months</button>
+    </div>
+  </div>
+  <div class="card__body"><div class="chart-box"><canvas id="salesChart"></canvas></div></div>
+</div>
+
+<div class="d-flex gap-2 flex-wrap">
+  <div class="card flex-1" style="min-width:320px">
+    <div class="card__header"><h3><i class="bi bi-clock-history me-2"></i>Recent transactions</h3></div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Invoice</th><th>Cashier</th><th>Payment</th><th class="num">Total</th></tr></thead>
+        <tbody>
+          {% for sale in stats.recent_sales %}
+          <tr>
+            <td><a href="{{ url_for('billing.invoice', sale_id=sale.id) }}">{{ sale.invoice_number }}</a><br><span class="text-muted" style="font-size:.72rem">{{ sale.created_at|datetime }}</span></td>
+            <td>{{ sale.cashier.display_name() if sale.cashier else '-' }}</td>
+            <td><span class="badge badge-brand">{{ sale.payment_method }}</span></td>
+            <td class="num">{{ sale.grand_total|money }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="table-empty">No sales yet. <a href="{{ url_for('billing.index') }}">Create the first bill</a>.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card flex-1" style="min-width:320px">
+    <div class="card__header"><h3><i class="bi bi-trophy me-2"></i>Best sellers (30 days)</h3></div>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead>
+        <tbody>
+          {% for row in stats.best_sellers %}
+          <tr>
+            <td>{{ row.product_name }}<br><span class="text-muted" style="font-size:.72rem">{{ row.sku }}</span></td>
+            <td class="num">{{ row.quantity }}</td>
+            <td class="num">{{ row.revenue|money }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="3" class="table-empty">No sales in the last 30 days.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  var series = {
+    daily: {{ stats.daily|tojson }},
+    weekly: {{ stats.weekly|tojson }},
+    monthly: {{ stats.monthly|tojson }}
+  };
+  var chart = null;
+  function drawSeries(key) {
+    var s = series[key];
+    if (chart) chart.destroy();
+    chart = new Chart(document.getElementById("salesChart"), {
+      type: "line",
+      data: {
+        labels: s.labels,
+        datasets: [
+          {
+            label: "Revenue",
+            data: s.revenue,
+            borderColor: "#ff735c",
+            backgroundColor: "rgba(255,115,92,.15)",
+            fill: true,
+            tension: .35,
+            yAxisID: "y",
+          },
+          {
+            label: "Bills",
+            data: s.bills,
+            borderColor: "#2e90fa",
+            backgroundColor: "rgba(46,144,250,.1)",
+            tension: .35,
+            yAxisID: "y1",
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        scales: {
+          y: { position: "left", beginAtZero: true, title: { display: true, text: "Revenue" } },
+          y1: { position: "right", beginAtZero: true, grid: { drawOnChartArea: false }, title: { display: true, text: "Bills" } }
+        }
+      }
+    });
+  }
+  document.querySelectorAll("[data-range]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("[data-range]").forEach(function (b) { b.classList.remove("btn-primary"); b.classList.add("btn-outline"); });
+      btn.classList.remove("btn-outline"); btn.classList.add("btn-primary");
+      drawSeries(btn.getAttribute("data-range"));
+    });
+  });
+  document.querySelector('[data-range="daily"]').click();
+</script>
+{% endblock %}

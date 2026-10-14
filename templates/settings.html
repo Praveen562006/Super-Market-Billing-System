@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Store settings</h1><p class="subtitle">Branding, currency and business rules.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('settings.audit') }}"><i class="bi bi-journal-text"></i> Audit log</a>
+</div>
+
+<form method="post" class="card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card__body">
+    <div class="form-grid">
+      {% for key in keys %}
+      <div class="field {{ 'full' if key in ['STORE_ADDRESS'] }}">
+        <label for="{{ key }}">{{ labels.get(key, key) }}</label>
+        <input type="text" id="{{ key }}" name="{{ key }}" value="{{ settings.get(key, '') }}">
+      </div>
+      {% endfor %}
+    </div>
+    <p class="hint mt-2">Tax rate is a percentage. Set it to 0 for tax-exempt stores. Currency symbol and invoice prefix are applied to new documents only.</p>
+  </div>
+  <div class="card__footer">
+    <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Save settings</button>
+  </div>
+</form>
+{% endblock %}

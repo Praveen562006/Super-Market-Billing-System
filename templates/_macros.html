@@ -1,0 +1,40 @@
+{% macro pager_links(pager, endpoint) %}
+  {% if pager and pager.pages > 1 %}
+    {% set args = request.args.to_dict() %}
+    <ul class="pagination">
+      {% if pager.has_prev %}
+        <li><a href="{{ url_for(endpoint, **dict(args, page=pager.prev_num)) }}">&lsaquo;</a></li>
+      {% else %}
+        <li><span class="disabled">&lsaquo;</span></li>
+      {% endif %}
+      {% for p in pager.iter_pages(left_edge=1, left_current=1, right_current=2, right_edge=1) %}
+        {% if p %}
+          <li><a class="{{ 'active' if p == pager.page }}" href="{{ url_for(endpoint, **dict(args, page=p)) }}">{{ p }}</a></li>
+        {% else %}
+          <li><span class="disabled">&hellip;</span></li>
+        {% endif %}
+      {% endfor %}
+      {% if pager.has_next %}
+        <li><a href="{{ url_for(endpoint, **dict(args, page=pager.next_num)) }}">&rsaquo;</a></li>
+      {% else %}
+        <li><span class="disabled">&rsaquo;</span></li>
+      {% endif %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{% macro stock_badge(product) %}
+  {% if product.stock_quantity <= 0 %}
+    <span class="badge badge-danger">Out of stock</span>
+  {% elif product.stock_quantity <= product.low_stock_threshold %}
+    <span class="badge badge-warn">Low: {{ product.stock_quantity }}</span>
+  {% else %}
+    <span class="badge badge-ok">{{ product.stock_quantity }}</span>
+  {% endif %}
+{% endmacro %}
+
+{% macro navlink(endpoint, icon, label, active) %}
+  <a class="nav-link {{ 'active' if active }}" href="{{ url_for(endpoint) }}">
+    <i class="bi bi-{{ icon }}"></i><span>{{ label }}</span>
+  </a>
+{% endmacro %}

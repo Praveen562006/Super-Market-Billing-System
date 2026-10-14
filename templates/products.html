@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager_links, stock_badge %}
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Products</h1><p class="subtitle">{{ pagination.total }} product(s) found</p></div>
+  <div class="spacer"></div>
+  <div class="btn-group">
+    <a class="btn btn-outline" href="{{ url_for('products.categories') }}"><i class="bi bi-tags"></i> Categories</a>
+    <a class="btn btn-primary" href="{{ url_for('products.create') }}"><i class="bi bi-plus-lg"></i> Add product</a>
+  </div>
+</div>
+
+<form class="filters" method="get">
+  <div class="field">
+    <label>Search</label>
+    <input type="text" name="q" value="{{ q }}" placeholder="Name, SKU or barcode">
+  </div>
+  <div class="field">
+    <label>Category</label>
+    <select name="category">
+      <option value="">All categories</option>
+      {% for category in categories %}
+      <option value="{{ category.id }}" {{ 'selected' if category_id == category.id }}>{{ category.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Status</label>
+    <select name="status">
+      <option value="active" {{ 'selected' if status == 'active' }}>Active</option>
+      <option value="inactive" {{ 'selected' if status == 'inactive' }}>Inactive</option>
+      <option value="all" {{ 'selected' if status == 'all' }}>All</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Stock</label>
+    <select name="stock">
+      <option value="all" {{ 'selected' if stock == 'all' }}>All stock</option>
+      <option value="low" {{ 'selected' if stock == 'low' }}>Low stock</option>
+      <option value="out" {{ 'selected' if stock == 'out' }}>Out of stock</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Sort</label>
+    <select name="sort">
+      <option value="name" {{ 'selected' if sort == 'name' }}>Name</option>
+      <option value="price" {{ 'selected' if sort == 'price' }}>Price</option>
+      <option value="stock" {{ 'selected' if sort == 'stock' }}>Stock</option>
+      <option value="updated" {{ 'selected' if sort == 'updated' }}>Last updated</option>
+    </select>
+  </div>
+  <button class="btn btn-dark" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+  <a class="btn btn-outline" href="{{ url_for('products.index') }}">Reset</a>
+</form>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr>
+          <th>SKU</th><th>Product</th><th>Category</th>
+          <th class="num">Price</th><th class="num">Disc %</th><th class="num">Tax %</th>
+          <th>Stock</th><th>Status</th><th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td><code>{{ product.sku }}</code>{% if product.barcode %}<br><span class="text-muted" style="font-size:.72rem">{{ product.barcode }}</span>{% endif %}</td>
+          <td>{{ product.name }}{% if product.description %}<br><span class="text-muted" style="font-size:.72rem">{{ product.description[:60] }}</span>{% endif %}</td>
+          <td>{{ product.category.name if product.category else '-' }}</td>
+          <td class="num">{{ product.selling_price|money }}</td>
+          <td class="num">{{ product.discount_percent|number }}%</td>
+          <td class="num">{{ product.effective_tax_rate|number }}%</td>
+          <td>{{ stock_badge(product) }}</td>
+          <td>{% if product.is_active %}<span class="badge badge-ok">Active</span>{% else %}<span class="badge badge-muted">Inactive</span>{% endif %}</td>
+          <td class="text-right nowrap">
+            <div class="btn-group" style="justify-content:flex-end">
+              <a class="btn btn-sm btn-outline" href="{{ url_for('products.edit', product_id=product.id) }}"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{{ url_for('products.toggle', product_id=product.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline" title="{{ 'Deactivate' if product.is_active else 'Activate' }}"><i class="bi bi-{{ 'toggle-on' if product.is_active else 'toggle-off' }}"></i></button>
+              </form>
+              <form method="post" action="{{ url_for('products.delete', product_id=product.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-danger" data-confirm="Delete '{{ product.name }}'? Products with sales history are deactivated instead."><i class="bi bi-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="table-empty">No products match your filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ pager_links(pagination, 'products.index') }}
+{% endblock %}

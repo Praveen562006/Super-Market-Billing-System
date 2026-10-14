@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager_links %}
+{% block title %}Audit log{% endblock %}
+{% block page_title %}Audit log{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Audit log</h1><p class="subtitle">Administrative and business actions.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('settings.index') }}"><i class="bi bi-arrow-left"></i> Settings</a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>When</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th><th>IP</th></tr></thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td>{{ log.created_at|datetime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>{{ log.user.display_name() if log.user else 'system' }}</td>
+          <td><span class="badge badge-muted">{{ log.action }}</span></td>
+          <td>{{ log.entity or '-' }}{% if log.entity_id %} #{{ log.entity_id }}{% endif %}</td>
+          <td>{{ log.details or '-' }}</td>
+          <td class="text-muted">{{ log.ip_address or '-' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="table-empty">No audit entries yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ pager_links(pagination, 'settings.audit') }}
+{% endblock %}

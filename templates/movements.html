@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager_links %}
+{% block title %}Stock movements{% endblock %}
+{% block page_title %}Stock movements{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Stock movements</h1><p class="subtitle">Full history of every stock change.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('inventory.index') }}"><i class="bi bi-arrow-left"></i> Inventory</a>
+</div>
+
+<form class="filters" method="get">
+  <div class="field">
+    <label>Product</label>
+    <select name="product">
+      <option value="">All products</option>
+      {% for product in products %}
+      <option value="{{ product.id }}" {{ 'selected' if product_id == product.id }}>{{ product.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Type</label>
+    <select name="type">
+      <option value="">All types</option>
+      {% for t in ['sale', 'purchase', 'adjustment', 'return'] %}
+      <option value="{{ t }}" {{ 'selected' if movement_type == t }}>{{ t|capitalize }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <button class="btn btn-dark" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+  <a class="btn btn-outline" href="{{ url_for('inventory.movements') }}">Reset</a>
+</form>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr><th>Date</th><th>Product</th><th>Type</th><th class="num">Change</th><th class="num">Balance</th><th>Reason</th><th>User</th></tr>
+      </thead>
+      <tbody>
+        {% for movement in movements %}
+        <tr>
+          <td>{{ movement.created_at|datetime }}</td>
+          <td>{{ movement.product.name if movement.product else '-' }}</td>
+          <td><span class="badge {{ 'badge-danger' if movement.quantity_change < 0 else 'badge-ok' }}">{{ movement.movement_type }}</span></td>
+          <td class="num">{{ '%+d'|format(movement.quantity_change) }}</td>
+          <td class="num">{{ movement.balance_after }}</td>
+          <td>{{ movement.reason or '-' }}</td>
+          <td>{{ movement.user.display_name() if movement.user else '-' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="table-empty">No stock movements recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ pager_links(pagination, 'inventory.movements') }}
+{% endblock %}

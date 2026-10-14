@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Users{% endblock %}
+{% block page_title %}Users{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Users</h1><p class="subtitle">Administrators and cashiers.</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-primary" href="{{ url_for('users.create') }}"><i class="bi bi-person-plus"></i> Add user</a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Last login</th><th class="text-right">Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><strong>{{ user.username }}</strong></td>
+          <td>{{ user.full_name or '-' }}</td>
+          <td><span class="badge {{ 'badge-brand' if user.is_admin else 'badge-muted' }}">{{ user.role }}</span></td>
+          <td>{% if user.is_active %}<span class="badge badge-ok">Active</span>{% else %}<span class="badge badge-danger">Disabled</span>{% endif %}</td>
+          <td>{{ user.last_login_at|datetime if user.last_login_at else 'Never' }}</td>
+          <td class="text-right nowrap">
+            <div class="btn-group" style="justify-content:flex-end">
+              <a class="btn btn-sm btn-outline" href="{{ url_for('users.edit', user_id=user.id) }}"><i class="bi bi-pencil"></i></a>
+              {% if user.id != current_user.id %}
+              <form method="post" action="{{ url_for('users.toggle', user_id=user.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline" title="{{ 'Disable' if user.is_active else 'Enable' }}"><i class="bi bi-{{ 'toggle-on' if user.is_active else 'toggle-off' }}"></i></button>
+              </form>
+              <form method="post" action="{{ url_for('users.delete', user_id=user.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-danger" data-confirm="Delete user '{{ user.username }}'?"><i class="bi bi-trash"></i></button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit user' if user else 'Add user' }}{% endblock %}
+{% block page_title %}{{ 'Edit user' if user else 'Add user' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>{{ 'Edit user' if user else 'Add user' }}</h1><p class="subtitle">{{ user.username if user else 'Create a staff account' }}</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('users.index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<form method="post" class="card" style="max-width:620px">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card__body">
+    <div class="field mb-2">
+      <label for="username">Username *</label>
+      <input type="text" id="username" name="username" maxlength="80" required value="{{ user.username if user else '' }}">
+    </div>
+    <div class="field mb-2">
+      <label for="full_name">Full name</label>
+      <input type="text" id="full_name" name="full_name" maxlength="120" value="{{ user.full_name or '' if user else '' }}">
+    </div>
+    <div class="field mb-2">
+      <label for="role">Role *</label>
+      <select id="role" name="role" required>
+        <option value="cashier" {{ 'selected' if user and user.role == 'cashier' }}>Cashier</option>
+        <option value="admin" {{ 'selected' if user and user.role == 'admin' }}>Administrator</option>
+      </select>
+    </div>
+    <div class="field mb-3">
+      <label for="password">{{ 'New password' if user else 'Password *' }}</label>
+      <input type="password" id="password" name="password" minlength="8" {{ '' if user else 'required' }}>
+      <span class="hint">{{ 'Leave blank to keep the current password.' if user else 'At least 8 characters. Passwords are stored hashed.' }}</span>
+    </div>
+  </div>
+  <div class="card__footer">
+    <div class="btn-group">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> {{ 'Save changes' if user else 'Create user' }}</button>
+      <a class="btn btn-outline" href="{{ url_for('users.index') }}">Cancel</a>
+    </div>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "_macros.html" import pager_links %}
+{% block title %}Invoices{% endblock %}
+{% block page_title %}Invoices{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><h1>Invoices</h1><p class="subtitle">{{ pagination.total }} transaction(s)</p></div>
+  <div class="spacer"></div>
+  <a class="btn btn-primary" href="{{ url_for('billing.index') }}"><i class="bi bi-cart-plus"></i> New sale</a>
+</div>
+
+<form class="filters" method="get">
+  <div class="field flex-1">
+    <label>Search</label>
+    <input type="text" name="q" value="{{ q }}" placeholder="Invoice number or customer mobile">
+  </div>
+  <button class="btn btn-dark" type="submit"><i class="bi bi-search"></i> Search</button>
+  <a class="btn btn-outline" href="{{ url_for('billing.sales') }}">Reset</a>
+</form>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="data">
+      <thead>
+        <tr><th>Invoice</th><th>Date</th><th>Cashier</th><th>Customer</th><th>Payment</th><th class="num">Items</th><th class="num">Total</th><th class="text-right">Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for sale in sales %}
+        <tr>
+          <td><a href="{{ url_for('billing.invoice', sale_id=sale.id) }}">{{ sale.invoice_number }}</a></td>
+          <td>{{ sale.created_at|datetime }}</td>
+          <td>{{ sale.cashier.display_name() if sale.cashier else '-' }}</td>
+          <td>{{ sale.customer_name or sale.customer_mobile or '-' }}</td>
+          <td><span class="badge badge-brand">{{ sale.payment_method }}</span></td>
+          <td class="num">{{ sale.total_quantity }}</td>
+          <td class="num">{{ sale.grand_total|money }}</td>
+          <td class="text-right nowrap">
+            <div class="btn-group" style="justify-content:flex-end">
+              <a class="btn btn-sm btn-outline" href="{{ url_for('billing.invoice_print', sale_id=sale.id) }}" target="_blank"><i class="bi bi-printer"></i></a>
+              <a class="btn btn-sm btn-outline" href="{{ url_for('billing.invoice_pdf', sale_id=sale.id) }}"><i class="bi bi-file-earmark-pdf"></i></a>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="table-empty">No invoices found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{{ pager_links(pagination, 'billing.sales') }}
+{% endblock %}
