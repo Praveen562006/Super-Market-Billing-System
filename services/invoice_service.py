@@ -1,7 +1,7 @@
 """Invoice numbering, rendering data and PDF generation."""
 from io import BytesIO
 
-from services.settings_service import get_setting, get_store_info
+from services.settings_service import get_logo_file_path, get_setting, get_store_info
 from utils import utcnow
 
 
@@ -23,6 +23,26 @@ def invoice_context(sale):
         "store": store,
         "currency": store["currency"],
     }
+
+
+def _logo_flowable(max_height_mm=16):
+    """Return a scaled reportlab Image for the store logo, or None."""
+    path = get_logo_file_path()
+    if not path:
+        return None
+    try:
+        from reportlab.lib.units import mm
+        from reportlab.lib.utils import ImageReader
+        from reportlab.platypus import Image as RLImage
+
+        width, height = ImageReader(path).getSize()
+        if not width or not height:
+            return None
+        max_height = max_height_mm * mm
+        scale = min(max_height / height, 1.0)
+        return RLImage(path, width=width * scale, height=height * scale)
+    except Exception:  # pragma: no cover - unreadable/unsupported image
+        return None
 
 
 def render_invoice_pdf(sale):
@@ -58,14 +78,22 @@ def render_invoice_pdf(sale):
     heading = ParagraphStyle("heading", parent=styles["Heading2"], spaceAfter=2)
 
     elements = []
-    elements.append(Paragraph(store["name"] or "SuperMarket", styles["Title"]))
+    store_block = [Paragraph(store["name"] or "SuperMarket", styles["Title"])]
     if store["address"]:
-        elements.append(Paragraph(store["address"], small))
+        store_block.append(Paragraph(store["address"], small))
     contact = " | ".join(filter(None, [store["phone"], store["email"]]))
     if contact:
-        elements.append(Paragraph(contact, small))
+        store_block.append(Paragraph(contact, small))
     if store["gstin"]:
-        elements.append(Paragraph(f"GSTIN: {store['gstin']}", small))
+        store_block.append(Paragraph(f"GSTIN: {store['gstin']}", small))
+
+    logo = _logo_flowable()
+    if logo is not None:
+        header = Table([[logo, store_block]], colWidths=[34 * mm, 140 * mm])
+        header.setStyle(TableStyle([("VALIGN", (0, 0), (-1, -1), "MIDDLE")]))
+        elements.append(header)
+    else:
+        elements.extend(store_block)
     elements.append(Spacer(1, 8 * mm))
 
     elements.append(Paragraph("TAX INVOICE", heading))

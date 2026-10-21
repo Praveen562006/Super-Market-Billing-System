@@ -1,5 +1,7 @@
 """Environment-based configuration for the SuperMarket Billing System."""
 import os
+import tempfile
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -30,6 +32,16 @@ class Config:
     MAX_BILL_DISCOUNT_PERCENT = os.environ.get("MAX_BILL_DISCOUNT_PERCENT", "100")
     INVOICE_PREFIX = os.environ.get("INVOICE_PREFIX", "INV")
 
+    # WhatsApp delivery
+    WHATSAPP_COUNTRY_CODE = os.environ.get("WHATSAPP_COUNTRY_CODE", "91")
+
+    # Store logo uploads
+    LOGO_UPLOAD_FOLDER = os.environ.get(
+        "LOGO_UPLOAD_FOLDER", os.path.join(BASE_DIR, "static", "uploads")
+    )
+    LOGO_URL_PREFIX = os.environ.get("LOGO_URL_PREFIX", "uploads")
+    MAX_CONTENT_LENGTH = int(os.environ.get("MAX_CONTENT_LENGTH", str(4 * 1024 * 1024)))
+
     # Bootstrap admin
     ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
     ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
@@ -56,6 +68,8 @@ class TestingConfig(Config):
     SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
     WTF_CSRF_ENABLED = False
     SECRET_KEY = "test-secret-key"
+    # Keep uploaded logos out of the project's static folder during tests.
+    LOGO_UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), "smbs-test-uploads")
 
 
 # Map Flask_ENV to config class

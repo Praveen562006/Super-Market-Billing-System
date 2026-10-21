@@ -13,7 +13,7 @@ from sqlalchemy import or_
 
 from extensions import db
 from models import Category, Product, Sale
-from services import billing_service
+from services import billing_service, customer_service, whatsapp_service
 from services.billing_service import BillingError
 
 billing_bp = Blueprint("billing", __name__)
@@ -69,6 +69,17 @@ def search_products():
     )
 
 
+@billing_bp.route("/customers/lookup")
+@login_required
+def customer_lookup():
+    """Return a registered buyer's name for the given mobile/WhatsApp number."""
+    mobile = (request.args.get("mobile") or "").strip()
+    customer = customer_service.find_by_mobile(mobile) if mobile else None
+    if customer is None:
+        return jsonify({"found": False})
+    return jsonify({"found": True, "name": customer.name or "", "mobile": customer.mobile})
+
+
 @billing_bp.route("/checkout", methods=["POST"])
 @login_required
 def checkout():
@@ -109,6 +120,7 @@ def checkout():
             "change_due": float(sale.change_due),
             "invoice_url": url_for("billing.invoice", sale_id=sale.id),
             "print_url": url_for("billing.invoice_print", sale_id=sale.id),
+            "whatsapp_url": whatsapp_service.build_link(sale),
         }
     )
 
@@ -139,14 +151,24 @@ def _get_sale_or_404(sale_id):
 @login_required
 def invoice(sale_id):
     sale = _get_sale_or_404(sale_id)
-    return render_template("invoice.html", sale=sale, printable=False)
+    return render_template(
+        "invoice.html",
+        sale=sale,
+        printable=False,
+        whatsapp_url=whatsapp_service.build_link(sale),
+    )
 
 
 @billing_bp.route("/sales/<int:sale_id>/print")
 @login_required
 def invoice_print(sale_id):
     sale = _get_sale_or_404(sale_id)
-    return render_template("invoice.html", sale=sale, printable=True)
+    return render_template(
+        "invoice.html",
+        sale=sale,
+        printable=True,
+        whatsapp_url=whatsapp_service.build_link(sale),
+    )
 
 
 @billing_bp.route("/sales/<int:sale_id>/pdf")

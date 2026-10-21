@@ -70,18 +70,43 @@
           <input type="text" id="sumChange" value="0.00" disabled>
         </div>
         <div class="field">
-          <label for="customerMobile">Customer mobile</label>
-          <input type="tel" id="customerMobile" maxlength="20" placeholder="Optional">
+          <label for="customerMobile"><i class="bi bi-whatsapp"></i> Customer WhatsApp number</label>
+          <input type="tel" id="customerMobile" maxlength="20" placeholder="e.g. 98765 43210" autocomplete="off">
+          <span class="hint" id="customerLookupStatus">Enter a number to find a registered buyer.</span>
         </div>
         <div class="field">
           <label for="customerName">Customer name</label>
-          <input type="text" id="customerName" maxlength="120" placeholder="Optional">
+          <input type="text" id="customerName" maxlength="120" placeholder="Auto-fills for registered buyers">
         </div>
       </div>
 
       <button class="btn btn-success btn-block mt-3" type="button" id="payBtn" disabled>
         <i class="bi bi-check2-circle"></i> Complete sale
       </button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="checkoutModalLabel"><i class="bi bi-check-circle-fill text-success me-2"></i>Sale completed</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-1 text-muted">Invoice <strong id="receiptInvoice">&mdash;</strong></p>
+        <div class="receipt-total" id="receiptTotal">0.00</div>
+        <p class="hint mt-2" id="receiptHint">Choose how to deliver the bill to the customer.</p>
+      </div>
+      <div class="modal-footer checkout-actions">
+        <a class="btn btn-outline" id="receiptPrint" href="#" target="_blank" rel="noopener"><i class="bi bi-printer"></i> Print bill</a>
+        <a class="btn btn-whatsapp" id="receiptWhatsapp" href="#" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Send on WhatsApp</a>
+      </div>
+      <div class="modal-footer checkout-actions">
+        <a class="btn btn-sm btn-outline" id="receiptView" href="#"><i class="bi bi-receipt"></i> View invoice</a>
+        <button type="button" class="btn btn-sm btn-primary" data-bs-dismiss="modal" id="startNewSale"><i class="bi bi-plus-lg"></i> New sale</button>
+      </div>
     </div>
   </div>
 </div>
@@ -92,7 +117,8 @@
   window.POS_CONFIG = {
     currency: "{{ store.currency }}",
     searchUrl: "{{ url_for('billing.search_products') }}",
-    checkoutUrl: "{{ url_for('billing.checkout') }}"
+    checkoutUrl: "{{ url_for('billing.checkout') }}",
+    customerLookupUrl: "{{ url_for('billing.customer_lookup') }}"
   };
 </script>
 <script src="{{ url_for('static', filename='js/billing.js') }}"></script>

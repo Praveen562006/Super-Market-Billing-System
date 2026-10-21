@@ -8,9 +8,32 @@
   <a class="btn btn-outline" href="{{ url_for('settings.audit') }}"><i class="bi bi-journal-text"></i> Audit log</a>
 </div>
 
-<form method="post" class="card">
+<form method="post" class="card" enctype="multipart/form-data">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
   <div class="card__body">
+    <div class="logo-field">
+      <div class="logo-preview">
+        {% if store.logo %}
+          <img src="{{ store.logo }}" alt="{{ store.name }} logo">
+        {% else %}
+          <i class="bi bi-image"></i>
+        {% endif %}
+      </div>
+      <div class="field flex-1">
+        <label for="logo">Store logo</label>
+        <input type="file" id="logo" name="logo" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml">
+        <span class="hint">PNG, JPG, GIF, WEBP or SVG, up to 4&nbsp;MB. Shown in the sidebar, on invoices and on printed bills.</span>
+        {% if store.logo %}
+        <div class="checkbox-row mt-1">
+          <input type="checkbox" id="remove_logo" name="remove_logo" value="1">
+          <label for="remove_logo" style="font-weight:500">Remove the current logo</label>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <hr>
+
     <div class="form-grid">
       {% for key in keys %}
       <div class="field {{ 'full' if key in ['STORE_ADDRESS'] }}">
@@ -19,7 +42,7 @@
       </div>
       {% endfor %}
     </div>
-    <p class="hint mt-2">Tax rate is a percentage. Set it to 0 for tax-exempt stores. Currency symbol and invoice prefix are applied to new documents only.</p>
+    <p class="hint mt-2">Tax rate is a percentage. Set it to 0 for tax-exempt stores. Currency symbol and invoice prefix are applied to new documents only. The WhatsApp country code (e.g. 91 for India) is added to local 10-digit numbers when sending a bill.</p>
   </div>
   <div class="card__footer">
     <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Save settings</button>

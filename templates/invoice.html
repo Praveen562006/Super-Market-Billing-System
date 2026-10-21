@@ -8,17 +8,23 @@
   <div class="btn-group">
     <a class="btn btn-outline" href="{{ url_for('billing.sales') }}"><i class="bi bi-arrow-left"></i> Back</a>
     <button class="btn btn-outline" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+    {% if whatsapp_url %}
+    <a class="btn btn-whatsapp" href="{{ whatsapp_url }}" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> Send on WhatsApp</a>
+    {% endif %}
     <a class="btn btn-primary" href="{{ url_for('billing.invoice_pdf', sale_id=sale.id) }}"><i class="bi bi-file-earmark-pdf"></i> PDF</a>
   </div>
 </div>
 
 <div class="invoice-sheet">
   <div class="invoice-head">
-    <div>
-      <h2 style="margin:0">{{ store.name }}</h2>
-      {% if store.address %}<div class="text-muted">{{ store.address }}</div>{% endif %}
-      <div class="text-muted">{{ store.phone }}{% if store.email %} &middot; {{ store.email }}{% endif %}</div>
-      {% if store.gstin %}<div class="text-muted">GSTIN: {{ store.gstin }}</div>{% endif %}
+    <div class="invoice-head__brand">
+      {% if store.logo %}<img class="invoice-logo" src="{{ store.logo }}" alt="{{ store.name }}">{% endif %}
+      <div>
+        <h2 style="margin:0">{{ store.name }}</h2>
+        {% if store.address %}<div class="text-muted">{{ store.address }}</div>{% endif %}
+        <div class="text-muted">{{ store.phone }}{% if store.email %} &middot; {{ store.email }}{% endif %}</div>
+        {% if store.gstin %}<div class="text-muted">GSTIN: {{ store.gstin }}</div>{% endif %}
+      </div>
     </div>
     <div class="text-right">
       <h3 style="margin:0">TAX INVOICE</h3>

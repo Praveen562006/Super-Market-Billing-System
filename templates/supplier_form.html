@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit supplier' if supplier else 'Add supplier' }}{% endblock %}
+{% block page_title %}{{ 'Edit supplier' if supplier else 'Add supplier' }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>{{ 'Edit supplier' if supplier else 'Add supplier' }}</h1>
+    <p class="subtitle">{{ supplier.name if supplier else 'Maintain your supplier contact book' }}</p>
+  </div>
+  <div class="spacer"></div>
+  <a class="btn btn-outline" href="{{ url_for('suppliers.index') }}"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<form method="post" class="card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card__body">
+    <div class="form-grid">
+      <div class="field full">
+        <label for="name">Supplier name *</label>
+        <input type="text" id="name" name="name" maxlength="160" required value="{{ supplier.name if supplier else '' }}">
+      </div>
+      <div class="field">
+        <label for="contact_person">Contact person</label>
+        <input type="text" id="contact_person" name="contact_person" maxlength="120" value="{{ supplier.contact_person or '' if supplier else '' }}">
+      </div>
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" name="phone" maxlength="30" value="{{ supplier.phone or '' if supplier else '' }}">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" maxlength="160" value="{{ supplier.email or '' if supplier else '' }}">
+      </div>
+      <div class="field">
+        <label for="gstin">GSTIN / tax number</label>
+        <input type="text" id="gstin" name="gstin" maxlength="40" value="{{ supplier.gstin or '' if supplier else '' }}">
+      </div>
+      <div class="field full">
+        <label for="address">Address</label>
+        <input type="text" id="address" name="address" maxlength="255" value="{{ supplier.address or '' if supplier else '' }}">
+      </div>
+      <div class="field full">
+        <label for="notes">Notes</label>
+        <textarea id="notes" name="notes" maxlength="2000">{{ supplier.notes or '' if supplier else '' }}</textarea>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <div class="checkbox-row">
+          <input type="checkbox" id="is_active" name="is_active" {{ 'checked' if (supplier.is_active if supplier else True) }}>
+          <label for="is_active" style="font-weight:500">Active supplier</label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card__footer">
+    <div class="btn-group">
+      <button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> {{ 'Save changes' if supplier else 'Create supplier' }}</button>
+      <a class="btn btn-outline" href="{{ url_for('suppliers.index') }}">Cancel</a>
+    </div>
+  </div>
+</form>
+{% endblock %}

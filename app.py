@@ -70,6 +70,7 @@ def create_app(config_class=None):
     from routes.dashboard import dashboard_bp
     from routes.billing import billing_bp
     from routes.products import products_bp
+    from routes.suppliers import suppliers_bp
     from routes.inventory import inventory_bp
     from routes.reports import reports_bp
     from routes.users import users_bp
@@ -79,6 +80,7 @@ def create_app(config_class=None):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(billing_bp, url_prefix="/billing")
     app.register_blueprint(products_bp, url_prefix="/products")
+    app.register_blueprint(suppliers_bp, url_prefix="/suppliers")
     app.register_blueprint(inventory_bp, url_prefix="/inventory")
     app.register_blueprint(reports_bp, url_prefix="/reports")
     app.register_blueprint(users_bp, url_prefix="/users")

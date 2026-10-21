@@ -184,6 +184,63 @@
       });
   }
 
+  function lookupCustomer() {
+    if (!els.mobile) return;
+    var mobile = els.mobile.value.trim();
+    var digits = mobile.replace(/\D/g, "");
+    if (!els.lookupStatus) {
+      // no-op
+    } else if (digits.length < 6) {
+      els.lookupStatus.textContent = "Enter a number to find a registered buyer.";
+    }
+
+    if (digits.length < 6) return;
+
+    fetch(window.POS_CONFIG.customerLookupUrl + "?mobile=" + encodeURIComponent(mobile))
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data.found && data.name) {
+          els.customerName.value = data.name;
+          if (els.lookupStatus) els.lookupStatus.textContent = "Registered buyer: " + data.name;
+        } else if (els.lookupStatus) {
+          els.lookupStatus.textContent = "New customer \u2014 name will be saved with this bill.";
+        }
+      })
+      .catch(function () {
+        if (els.lookupStatus) els.lookupStatus.textContent = "";
+      });
+  }
+
+  function showReceipt(data) {
+    setText("receiptInvoice", data.invoice_number || "\u2014");
+    setText("receiptTotal", fmt(data.grand_total));
+
+    var printBtn = document.getElementById("receiptPrint");
+    if (printBtn) printBtn.href = data.print_url || data.invoice_url || "#";
+
+    var viewBtn = document.getElementById("receiptView");
+    if (viewBtn) viewBtn.href = data.invoice_url || "#";
+
+    var waBtn = document.getElementById("receiptWhatsapp");
+    var hint = document.getElementById("receiptHint");
+    if (waBtn) {
+      if (data.whatsapp_url) {
+        waBtn.href = data.whatsapp_url;
+        waBtn.classList.remove("d-none");
+        if (hint) hint.textContent = "Print the bill or send it straight to the customer on WhatsApp.";
+      } else {
+        waBtn.removeAttribute("href");
+        waBtn.classList.add("d-none");
+        if (hint) hint.textContent = "No WhatsApp number was added, so only printing is available.";
+      }
+    }
+
+    var modalEl = document.getElementById("checkoutModal");
+    if (modalEl && window.bootstrap) {
+      window.bootstrap.Modal.getOrCreateInstance(modalEl).show();
+    }
+  }
+
   function checkout() {
     var ids = Object.keys(state.cart);
     if (!ids.length) { window.alert("Add at least one product."); return; }
@@ -209,7 +266,15 @@
       client_token: state.token,
     }).then(function (result) {
       if (result.ok && result.data.success) {
-        window.location.href = result.data.print_url || result.data.invoice_url;
+        // Reset the cart and immediately offer the two delivery options.
+        state.cart = {};
+        state.token = genToken();
+        els.received.value = "";
+        els.billDiscount.value = "0";
+        renderCart();
+        showReceipt(result.data);
+        els.payBtn.disabled = false;
+        els.payBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Complete sale';
         return;
       }
       window.alert((result.data && result.data.message) || "Checkout failed.");
@@ -234,6 +299,7 @@
     els.changeRow = document.getElementById("changeRow");
     els.mobile = document.getElementById("customerMobile");
     els.customerName = document.getElementById("customerName");
+    els.lookupStatus = document.getElementById("customerLookupStatus");
     els.billDiscount = document.getElementById("billDiscount");
     els.sumTotal = document.getElementById("sumTotal");
     els.payBtn = document.getElementById("payBtn");
@@ -247,6 +313,7 @@
       updateChange(total);
     });
     els.billDiscount.addEventListener("input", renderCart);
+    els.mobile.addEventListener("input", debounce(lookupCustomer, 400));
     els.payBtn.addEventListener("click", checkout);
 
     document.getElementById("clearCart").addEventListener("click", function () {

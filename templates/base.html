@@ -17,7 +17,11 @@
 <div class="app-shell">
   <aside class="sidebar" id="sidebar">
     <a class="sidebar__brand" href="{{ url_for('dashboard.index') }}">
+      {% if store.logo %}
+      <span class="logo-mark logo-mark--image"><img src="{{ store.logo }}" alt="{{ store.name }} logo"></span>
+      {% else %}
       <span class="logo-mark"><i class="bi bi-shop"></i></span>
+      {% endif %}
       <span>{{ store.name }}<small>Billing &amp; Inventory</small></span>
     </a>
     <nav class="sidebar__nav">
@@ -30,6 +34,7 @@
       <div class="sidebar__section">Catalogue</div>
       {{ navlink('products.index', 'box-seam', 'Products', ep in ['products.index', 'products.create', 'products.edit']) }}
       {{ navlink('products.categories', 'tags', 'Categories', ep == 'products.categories') }}
+      {{ navlink('suppliers.index', 'truck', 'Suppliers', ep.startswith('suppliers.')) }}
 
       <div class="sidebar__section">Stock</div>
       {{ navlink('inventory.index', 'boxes', 'Inventory', ep == 'inventory.index') }}

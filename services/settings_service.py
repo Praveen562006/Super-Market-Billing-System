@@ -5,12 +5,15 @@ Settings are stored in the ``settings`` table and fall back to the values in
 currency, tax rate and discount policy configurable at runtime without code
 changes.
 """
+import os
+import time
 from decimal import Decimal, InvalidOperation
 
-from flask import current_app, g
+from flask import current_app, g, url_for
 
 from extensions import db
 from models import Setting
+from utils import ValidationError
 
 # Keys that may be edited from the Settings screen and their config fallback.
 EDITABLE_KEYS = (
@@ -24,6 +27,7 @@ EDITABLE_KEYS = (
     "DEFAULT_LOW_STOCK_THRESHOLD",
     "MAX_BILL_DISCOUNT_PERCENT",
     "INVOICE_PREFIX",
+    "WHATSAPP_COUNTRY_CODE",
 )
 
 LABELS = {
@@ -37,6 +41,7 @@ LABELS = {
     "DEFAULT_LOW_STOCK_THRESHOLD": "Default low-stock threshold",
     "MAX_BILL_DISCOUNT_PERCENT": "Maximum bill discount (%)",
     "INVOICE_PREFIX": "Invoice number prefix",
+    "WHATSAPP_COUNTRY_CODE": "WhatsApp country code",
 }
 
 DEFAULTS = {
@@ -45,7 +50,12 @@ DEFAULTS = {
     "DEFAULT_LOW_STOCK_THRESHOLD": "10",
     "MAX_BILL_DISCOUNT_PERCENT": "100",
     "CURRENCY_SYMBOL": "\u20b9",
+    "WHATSAPP_COUNTRY_CODE": "91",
 }
+
+# Store logo ---------------------------------------------------------------
+LOGO_KEY = "STORE_LOGO"
+ALLOWED_LOGO_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp", "svg"}
 
 
 def _cache():
@@ -118,6 +128,82 @@ def get_currency_symbol():
     return get_setting("CURRENCY_SYMBOL", "\u20b9")
 
 
+def get_whatsapp_country_code():
+    digits = "".join(ch for ch in str(get_setting("WHATSAPP_COUNTRY_CODE", "91") or "") if ch.isdigit())
+    return digits
+
+
+# ---------------------------------------------------------------------------
+# Store logo
+# ---------------------------------------------------------------------------
+def _logo_folder():
+    folder = current_app.config.get("LOGO_UPLOAD_FOLDER") or os.path.join(
+        current_app.static_folder, "uploads"
+    )
+    os.makedirs(folder, exist_ok=True)
+    return folder
+
+
+def get_logo_path():
+    """Return the stored logo path relative to the static folder ('' if none)."""
+    return get_setting(LOGO_KEY, "") or ""
+
+
+def get_logo_url():
+    """Return a servable URL for the logo, or '' when no logo is configured."""
+    path = get_logo_path()
+    if not path:
+        return ""
+    try:
+        return url_for("static", filename=path)
+    except RuntimeError:  # pragma: no cover - outside a request/app context
+        return ""
+
+
+def get_logo_file_path():
+    """Return the absolute path of the logo file, or '' when unavailable."""
+    path = get_logo_path()
+    if not path:
+        return ""
+    full = os.path.join(_logo_folder(), os.path.basename(path))
+    return full if os.path.isfile(full) else ""
+
+
+def _delete_logo_file(path):
+    if not path:
+        return
+    try:
+        full = os.path.join(_logo_folder(), os.path.basename(path))
+        if os.path.isfile(full):
+            os.remove(full)
+    except OSError:  # pragma: no cover - best-effort cleanup
+        pass
+
+
+def save_logo(file_storage):
+    """Persist an uploaded logo, replacing any previous one."""
+    filename = (getattr(file_storage, "filename", "") or "").strip()
+    if not filename:
+        return None
+    extension = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    if extension not in ALLOWED_LOGO_EXTENSIONS:
+        raise ValidationError(
+            "Unsupported logo format. Use PNG, JPG, GIF, WEBP or SVG."
+        )
+    prefix = current_app.config.get("LOGO_URL_PREFIX", "uploads").strip("/")
+    target = f"logo_{int(time.time())}.{extension}"
+    file_storage.save(os.path.join(_logo_folder(), target))
+    _delete_logo_file(get_logo_path())
+    set_setting(LOGO_KEY, f"{prefix}/{target}")
+    return f"{prefix}/{target}"
+
+
+def clear_logo():
+    """Remove the configured logo (database value and file)."""
+    _delete_logo_file(get_logo_path())
+    set_setting(LOGO_KEY, "")
+
+
 def get_store_info():
     return {
         "name": get_setting("STORE_NAME", "SuperMarket"),
@@ -126,6 +212,8 @@ def get_store_info():
         "email": get_setting("STORE_EMAIL", ""),
         "gstin": get_setting("STORE_GSTIN", ""),
         "currency": get_currency_symbol(),
+        "logo": get_logo_url(),
+        "whatsapp_country_code": get_whatsapp_country_code(),
     }
 
 

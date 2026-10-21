@@ -1,7 +1,7 @@
 """Role-based access control tests."""
 from tests.conftest import ADMIN_PASSWORD, CASHIER_PASSWORD
 
-ADMIN_ONLY_PATHS = ["/products/", "/inventory/", "/reports/", "/users/", "/settings/"]
+ADMIN_ONLY_PATHS = ["/products/", "/suppliers/", "/inventory/", "/reports/", "/users/", "/settings/"]
 
 
 def test_cashier_is_denied_admin_pages(client, login):

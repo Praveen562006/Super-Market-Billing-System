@@ -142,6 +142,43 @@ class Product(TimestampMixin, db.Model):
 
 
 # ---------------------------------------------------------------------------
+# Suppliers
+# ---------------------------------------------------------------------------
+class Supplier(TimestampMixin, db.Model):
+    __tablename__ = "suppliers"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(160), nullable=False, index=True)
+    contact_person = db.Column(db.String(120))
+    phone = db.Column(db.String(30))
+    email = db.Column(db.String(160))
+    address = db.Column(db.String(255))
+    gstin = db.Column(db.String(40))
+    notes = db.Column(db.Text)
+    is_active = db.Column(db.Boolean, nullable=False, default=True, index=True)
+
+    def __repr__(self):
+        return f"<Supplier {self.name}>"
+
+
+# ---------------------------------------------------------------------------
+# Customers (registered buyers, used for WhatsApp delivery)
+# ---------------------------------------------------------------------------
+class Customer(TimestampMixin, db.Model):
+    __tablename__ = "customers"
+
+    id = db.Column(db.Integer, primary_key=True)
+    # Digits only (an optional country code may be included).
+    mobile = db.Column(db.String(20), unique=True, nullable=False, index=True)
+    name = db.Column(db.String(120))
+    email = db.Column(db.String(160))
+    is_active = db.Column(db.Boolean, nullable=False, default=True, index=True)
+
+    def __repr__(self):
+        return f"<Customer {self.mobile} {self.name or ''}>"
+
+
+# ---------------------------------------------------------------------------
 # Sales / billing
 # ---------------------------------------------------------------------------
 class Sale(db.Model):

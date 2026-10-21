@@ -9,6 +9,8 @@ from services.settings_service import (
     EDITABLE_KEYS,
     LABELS,
     all_settings,
+    clear_logo,
+    save_logo,
     set_setting,
 )
 from utils import ValidationError, parse_decimal, parse_int
@@ -34,6 +36,13 @@ def index():
                 values[key] = raw
             for key, value in values.items():
                 set_setting(key, value)
+
+            if request.form.get("remove_logo"):
+                clear_logo()
+            logo = request.files.get("logo")
+            if logo is not None and (logo.filename or "").strip():
+                save_logo(logo)
+
             audit_service.log_action("settings.update", "Setting", None, details="store settings updated")
             db.session.commit()
             flash("Settings saved.", "success")

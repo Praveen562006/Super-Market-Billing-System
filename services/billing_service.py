@@ -8,7 +8,7 @@ from decimal import ROUND_HALF_UP, Decimal
 
 from extensions import db
 from models import Payment, Product, Sale, SaleItem, StockMovement
-from services import audit_service, inventory_service, settings_service
+from services import audit_service, customer_service, inventory_service, settings_service
 from services.invoice_service import build_invoice_number
 
 TWO_PLACES = Decimal("0.01")
@@ -229,6 +229,9 @@ def create_sale(
         db.session.add(
             Payment(sale_id=sale.id, method=payment_method, amount=grand_total)
         )
+        # Remember the buyer so their name auto-fills next time.
+        if sale.customer_mobile:
+            customer_service.register(sale.customer_mobile, sale.customer_name)
         audit_service.log_action(
             "sale.create",
             entity="Sale",
